@@ -223,10 +223,7 @@
 				optionalSubjects: [{
 					value: '1',
 					label: '政治'
-				}],
-				optionalSubjects1: '',
-				optionalSubjects2: '',
-				optionalSubjects3: '',
+				}], 
 				//自选科目选项  -end
 					
 				cascaderOptions: [{
@@ -322,30 +319,30 @@
 			//初始化自选科目
 			initOptionalSubjects(){
 				var that = this;
-				this.queryDictionaryByPCode("OPTIONAL_SUBJECTS",function(data){
+				this.$generalApi.queryDictionaryByPCode("OPTIONAL_SUBJECTS",function(data){
 					that.optionalSubjects=[];
 					data.forEach((elment, index, array) => {
 						that.optionalSubjects.push({
 							value:elment.code,
-							label: elment.describe
+							label: elment.name
 						})
 					}); 
 				});  
 			},
 			//通过父节点编号查询字典信息
-			queryDictionaryByPCode(pcode,_callBack){
-				this.$http({
-				  url: this.$http.adornUrl(`/dictionary/pcode/${pcode}`),
-				  method: 'get', 
-				}).then(({data}) => {
-				  if (data && data.code === 0) { 
-					  //字典信息
-				      typeof _callBack== "function" && _callBack(data.dictionary)
-				  } else {
-					this.$message.error(data.msg)
-				  } 
-				});
-			} ,
+			// queryDictionaryByPCode(pcode,_callBack){
+			// 	this.$http({
+			// 	  url: this.$http.adornUrl(`/dictionary/pcode/${pcode}`),
+			// 	  method: 'get', 
+			// 	}).then(({data}) => {
+			// 	  if (data && data.code === 0) { 
+			// 		  //字典信息
+			// 	      typeof _callBack== "function" && _callBack(data.dictionary)
+			// 	  } else {
+			// 		this.$message.error(data.msg)
+			// 	  } 
+			// 	});
+			// } ,
 			//初始化区域信息
 			initCascaderOptions(){ 
 				var that = this;
