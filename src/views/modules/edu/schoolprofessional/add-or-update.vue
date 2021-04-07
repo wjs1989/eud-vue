@@ -1,10 +1,24 @@
 <template>
 	<el-dialog :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" :visible.sync="visible">
 		<el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-			<el-form-item label="所属学校" prop="schoolId"><el-input v-model="dataForm.schoolId" placeholder="所属学校"></el-input></el-form-item>
-			<el-form-item label="专业名称" prop="professionalName"><el-input v-model="dataForm.professionalName" placeholder="专业名称"></el-input></el-form-item>
-			<el-form-item label="专业代号" prop="professionalCode"><el-input v-model="dataForm.professionalCode" placeholder="专业代号"></el-input></el-form-item>
-			<el-form-item label="专业编号" prop="professionalNumber"><el-input v-model="dataForm.professionalNumber" placeholder="专业编号"></el-input></el-form-item>
+			<el-form-item label="所属学校" prop="schoolId">
+				<el-select v-model="dataForm.schoolId" filterable placeholder="请选择">
+				    <el-option
+				      v-for="item in schools"
+				      :key="item.value"
+				      :label="item.label"
+				      :value="item.value">
+				    </el-option>
+				  </el-select>
+			</el-form-item>
+			<el-form-item label="专业名称" prop="professionalName"><el-input v-model="dataForm.professionalName" placeholder="专业名称" style="width:60%;"></el-input></el-form-item>
+			<el-form-item label="专业代号" prop="professionalCode"><el-input v-model="dataForm.professionalCode" placeholder="专业代号" style="width:60%;"></el-input></el-form-item>
+			<el-form-item label="专业编号" prop="professionalNumber">
+				<el-row :gutter="10">
+					<el-input v-model="dataForm.professionalNumber" placeholder="专业编号,输入专业名称后查询" readonly style="width:60%;"></el-input>
+					<el-button type="info" round @click="queryProfessionalNumber()">查询</el-button>
+				</el-row>
+			</el-form-item>
 			<el-form-item label="等级" prop="level"><el-input v-model="dataForm.level" placeholder="等级"></el-input></el-form-item>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
@@ -33,7 +47,8 @@ export default {
 				professionalCode: [{ required: true, message: '专业代号不能为空', trigger: 'blur' }],
 				professionalNumber: [{ required: true, message: '专业编号（自己定义的）不能为空', trigger: 'blur' }],
 				level: [{ required: true, message: '1 一本，2 二本，3专科不能为空', trigger: 'blur' }]
-			}
+			},
+			schools:[]//学校列表
 		};
 	},
 	methods: {
@@ -58,6 +73,8 @@ export default {
 					});
 				}
 			});
+			
+			this.initSchools();
 		},
 		// 表单提交
 		dataFormSubmit() {
@@ -89,6 +106,40 @@ export default {
 							this.$message.error(data.msg);
 						}
 					});
+				}
+			});
+		},
+		initSchools(){
+			var that = this;
+			this.$http({
+				url: this.$http.adornUrl(`/edu/school/school-list`),
+				method: 'get'
+			}).then(({ data }) => {
+				if (data && data.code === 0) { 
+					that.schools = [];
+					data.schools.forEach((elment, index, array) => {
+						that.schools.push({
+							value: elment.id,
+							label: elment.schoolName
+						});
+					});
+				} else {
+					this.$message.error(data.msg);
+				}
+			});
+		},
+		//查询专业编号
+		queryProfessionalNumber(){
+			this.$http({
+				url: this.$http.adornUrl(`/dictionary/name/PROFESSIONAL_CODE/${this.dataForm.professionalName}`),
+				method: 'get'
+			}).then(({ data }) => {
+				if (data && data.code === 0) { 
+					if(data.dictionary != undefined){
+						this.dataForm.professionalNumber = data.dictionary.code
+					} 
+				} else {
+					this.$message.error(data.msg);
 				}
 			});
 		}

@@ -32,7 +32,10 @@
         prop="schoolId"
         header-align="center"
         align="center"
-        label="所属学校">
+        label="所属学校"> 
+		<template slot-scope="scope"> 
+			<span>{{getSchool(scope.row.schoolId)}}</span>
+		</template> 
       </el-table-column>
       <el-table-column
         prop="professionalName"
@@ -105,7 +108,7 @@
       AddOrUpdate
     },
     activated () {
-      this.getDataList()
+      this.getDataList(); 
     },
     methods: {
       // 获取数据列表

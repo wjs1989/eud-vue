@@ -13,6 +13,13 @@
     <el-form-item label="区名称" prop="districtName">
       <el-input v-model="dataForm.districtName" placeholder="区名称"></el-input>
     </el-form-item>
+	<el-form-item label="级别" prop="arealevel"> 
+	  <el-select v-model="dataForm.arealevel" placeholder="请选择">
+	  	<el-option v-for="item in arealevels" :key="item.value" :label="item.label"
+	  		:value="item.value">
+	  	</el-option>
+	  </el-select>
+	</el-form-item>
     <el-form-item label="描述" prop="description">
       <el-input v-model="dataForm.description" placeholder="描述"></el-input>
     </el-form-item>
@@ -34,8 +41,19 @@
           districtCode: '',
           parentCode: '',
           districtName: '',
+		  arealevel:'',
           description: ''
         },
+		arealevels: [{
+			value: '1',
+			label: '省'
+		},{
+			value: '2',
+			label: '市'
+		},{
+			value: '3',
+			label: '区'
+		}],
         dataRule: {
           districtCode: [
             { required: true, message: '行政区划编号不能为空', trigger: 'blur' }
@@ -69,6 +87,8 @@
                 this.dataForm.parentCode = data.sysDistrictInfo.parentCode
                 this.dataForm.districtName = data.sysDistrictInfo.districtName
                 this.dataForm.description = data.sysDistrictInfo.description
+				this.dataForm.arealevel = data.sysDistrictInfo.arealevel+''
+			 
               }
             })
           }
@@ -86,7 +106,8 @@
                 'districtCode': this.dataForm.districtCode,
                 'parentCode': this.dataForm.parentCode,
                 'districtName': this.dataForm.districtName,
-                'description': this.dataForm.description
+                'description': this.dataForm.description,
+				'arealevel': this.dataForm.arealevel
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

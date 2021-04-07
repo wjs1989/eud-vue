@@ -44,25 +44,28 @@
         prop="province"
         header-align="center"
         align="center"
-        label="省">
-      </el-table-column>
-      <el-table-column
-        prop="city"
-        header-align="center"
-        align="center"
-        label="市">
-      </el-table-column>
+        label="地区">
+		<template slot-scope="scope">
+			<span>{{ getDistrict({province:scope.row.province,city:scope.row.city})}}</span>
+		</template>
+      </el-table-column> 
       <el-table-column
         prop="type"
         header-align="center"
         align="center"
         label="类型">
+		<template slot-scope="scope">
+			<span>{{getSchoolType(scope.row.type)}}</span>
+		</template>
       </el-table-column>
       <el-table-column
         prop="level"
         header-align="center"
         align="center"
         label="等级">
+		<template slot-scope="scope"> 
+			<span>{{getSchoolLevel(scope.row.level)}}</span>
+		</template>
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -104,13 +107,24 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+		
+		//学校类型
+		schoolTypes: [{value: '1',label: ''}],
+	    //学校等级
+		schoolLevels: [{value: '1',label: ''}],
+		
+		//区域
+		districtOptions:[]
       }
     },
     components: {
       AddOrUpdate
     },
     activated () {
+	  this.initSchoolType()
+	  this.initSchoolLevel()
+	  this.initDistrictOptions()
       this.getDataList()
     },
     methods: {
@@ -151,15 +165,97 @@
       selectionChangeHandle (val) {
         this.dataListSelections = val
       },
-      // 新增 / 修改
-      addOrUpdateHandle (id) {
+    // 新增 / 修改
+    addOrUpdateHandle (id) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+          this.$refs.addOrUpdate.init(id,this.schoolTypes,this.schoolLevels,this.districtOptions)
         })
       },
+	//初始化学校类型
+	initSchoolType () {
+		var that = this;
+		this.$generalApi.queryDictionaryByPCode('SCHOOL_TYPE', function(data) {
+			that.schoolTypes = [];
+			data.forEach((elment, index, array) => {
+				that.schoolTypes.push({
+					value: elment.code,
+					label: elment.name
+				});
+			});
+		});
+	},
+	//初始化学校等级
+	initSchoolLevel () {
+		var that = this;
+		this.$generalApi.queryDictionaryByPCode('SCHOOL_LEVEL', function(data) {
+			that.schoolLevels = [];
+			data.forEach((elment, index, array) => {
+				that.schoolLevels.push({
+					value: elment.code,
+					label: elment.name
+				});
+			});
+		});
+	},
+	//初始化区域信息
+	initDistrictOptions(){ 
+		var that = this;
+		this.$http({
+		  url: this.$http.adornUrl(`/district/tree`),
+		  method: 'get', 
+		}).then(({data}) => {
+		  if (data && data.code === 0) { 
+			  //区域信息 
+			  that.districtOptions = [];
+		      that.districtOptions=data.district.children ; 
+			   
+		  } else {
+			this.$message.error(data.msg)
+		  } 
+		});
+	},
+	//获取学校类型
+	getSchoolType (type){ 
+		for (var i = 0; i < this.schoolTypes.length; i++) { 
+			if(this.schoolTypes[i].value == type){ 
+				return this.schoolTypes[i].label
+			}
+		}
+		
+		return type; 
+	},
+	//获取学校等级
+	getSchoolLevel (level){
+		for (var i = 0; i < this.schoolLevels.length; i++) { 
+			if(this.schoolLevels[i].value == level){ 
+				return this.schoolLevels[i].label
+			}
+		}
+		
+		return level; 
+	},
+	//获取区域
+	getDistrict(district){ 
+		var d = "";
+		for (var i = 0; i < this.districtOptions.length; i++) {
+			if(this.districtOptions[i].value == district.province){ 
+				d = this.districtOptions[i].label  
+				
+				var children = this.districtOptions[i].children
+				if(children != undefined && children.length > 0){
+					for (var j = 0; j < children.length; j++) {
+						if(children[j].value == district.city){ 
+							d = d + " / " + children[j].label
+						}
+					}
+				} 
+			}
+		}
+		return d;
+	},
       // 删除
-      deleteHandle (id) {
+    deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })

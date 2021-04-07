@@ -45,6 +45,18 @@
         header-align="center"
         align="center"
         label="区名称">
+      </el-table-column>   
+	  <el-table-column
+        prop="arealevel"
+        header-align="center"
+        align="center"
+        label="级别">
+		<template slot-scope="scope">
+			<span v-if="scope.row.arealevel == 1">省</span>
+			<span v-else-if="scope.row.arealevel == 2">市</span>
+			<span v-else-if="scope.row.arealevel == 3">区</span>
+			<span v-else>未知</span> 
+		</template>
       </el-table-column>
       <el-table-column
         prop="description"
