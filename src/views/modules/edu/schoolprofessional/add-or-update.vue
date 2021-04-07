@@ -19,7 +19,7 @@
 					<el-button type="info" round @click="queryProfessionalNumber()">查询</el-button>
 				</el-row>
 			</el-form-item>
-			<el-form-item label="等级" prop="level"><el-input v-model="dataForm.level" placeholder="等级"></el-input></el-form-item>
+			<!-- <el-form-item label="等级" prop="level"><el-input v-model="dataForm.level" placeholder="等级"></el-input></el-form-item> -->
 		</el-form>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="visible = false">取消</el-button>
@@ -45,8 +45,8 @@ export default {
 				schoolId: [{ required: true, message: '所属学校不能为空', trigger: 'blur' }],
 				professionalName: [{ required: true, message: '专业名称不能为空', trigger: 'blur' }],
 				professionalCode: [{ required: true, message: '专业代号不能为空', trigger: 'blur' }],
-				professionalNumber: [{ required: true, message: '专业编号（自己定义的）不能为空', trigger: 'blur' }],
-				level: [{ required: true, message: '1 一本，2 二本，3专科不能为空', trigger: 'blur' }]
+				professionalNumber: [{ required: true, message: '专业编号（自己定义的）不能为空', trigger: 'blur' }]
+				 
 			},
 			schools:[]//学校列表
 		};
