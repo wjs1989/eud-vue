@@ -52,12 +52,12 @@
         align="center"
         label="专业编号">
       </el-table-column>
-      <el-table-column
+     <!-- <el-table-column
         prop="level"
         header-align="center"
         align="center"
         label="等级">
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         fixed="right"
         header-align="center"
