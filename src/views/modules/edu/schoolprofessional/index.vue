@@ -29,13 +29,10 @@
         label=""> -->
       </el-table-column>
       <el-table-column
-        prop="schoolId"
+        prop="schoolName"
         header-align="center"
         align="center"
-        label="所属学校"> 
-		<template slot-scope="scope"> 
-			<span>{{getSchool(scope.row.schoolId)}}</span>
-		</template> 
+        label="所属学校">  
       </el-table-column>
       <el-table-column
         prop="professionalName"
