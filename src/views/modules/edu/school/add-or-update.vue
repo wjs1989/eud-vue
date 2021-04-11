@@ -3,22 +3,17 @@
 		<el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
 			<el-form-item label="学校名称" prop="schoolName"><el-input v-model="dataForm.schoolName" placeholder="学校名称"></el-input></el-form-item>
 			<el-form-item label="学校代号" prop="schoolCode"><el-input v-model="dataForm.schoolCode" placeholder="学校代号"></el-input></el-form-item>
-			<el-form-item label="区域" prop="province"> 
-				<el-cascader placeholder="试试搜索：浙江" :options="districtOptions" filterable
-					@change="districtChange" v-model="districtDefault"></el-cascader>
-			</el-form-item> 
-			<el-form-item label="类型" prop="type"> 
+			<el-form-item label="区域" prop="province">
+				<el-cascader placeholder="试试搜索：浙江" :options="districtOptions" filterable @change="districtChange" v-model="districtDefault"></el-cascader>
+			</el-form-item>
+			<el-form-item label="类型" prop="type">
 				<el-select v-model="dataForm.type" placeholder="请选择">
-					<el-option v-for="item in schoolTypes" :key="item.value" :label="item.label"
-						:value="item.value">
-					</el-option>
+					<el-option v-for="item in schoolTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="等级" prop="level"> 
+			<el-form-item label="等级" prop="level">
 				<el-select v-model="dataForm.level" placeholder="请选择">
-					<el-option v-for="item in schoolLevels" :key="item.value" :label="item.label"
-						:value="item.value">
-					</el-option>
+					<el-option v-for="item in schoolLevels" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 			</el-form-item>
 		</el-form>
@@ -43,14 +38,18 @@ export default {
 				type: '',
 				level: ''
 			},
-			schoolTypes: [{
+			schoolTypes: [
+				{
 					value: '1',
 					label: ''
-				}],
-			schoolLevels: [{
+				}
+			],
+			schoolLevels: [
+				{
 					value: '1',
 					label: ''
-				}],
+				}
+			],
 			dataRule: {
 				schoolName: [{ required: true, message: '学校名称不能为空', trigger: 'blur' }],
 				schoolCode: [{ required: true, message: '学校代号不能为空', trigger: 'blur' }],
@@ -59,31 +58,38 @@ export default {
 				type: [{ required: true, message: '类型', trigger: 'blur' }],
 				level: [{ required: true, message: '等级', trigger: 'blur' }]
 			},
-			districtOptions: [{
-				value: 'zj',
-				label: '浙江',
-				children: [{
-					value: 'hz',
-					label: '杭州'
-				}],
-			}, {
-				value: 'js',
-				label: '江西',
-				children: [{
-					value: 'sr',
-					label: '上饶'
-				}],
-			}],
+			districtOptions: [
+				{
+					value: 'zj',
+					label: '浙江',
+					children: [
+						{
+							value: 'hz',
+							label: '杭州'
+						}
+					]
+				},
+				{
+					value: 'js',
+					label: '江西',
+					children: [
+						{
+							value: 'sr',
+							label: '上饶'
+						}
+					]
+				}
+			],
 			districtDefault: ['js', 'nc']
 		};
 	},
 	methods: {
-		init(id,schoolTypes,schoolLevels,districtOptions) {
+		init(id, schoolTypes, schoolLevels, districtOptions) {
 			this.dataForm.id = id || 0;
 			this.schoolTypes = schoolTypes; //初始化学校类型
 			this.schoolLevels = schoolLevels; //初始化学校等级
 			this.districtOptions = districtOptions; //初始化区域
-			
+
 			this.visible = true;
 			this.$nextTick(() => {
 				this.$refs['dataForm'].resetFields();
@@ -100,24 +106,24 @@ export default {
 							this.dataForm.city = data.school.city;
 							this.dataForm.type = data.school.type;
 							this.dataForm.level = data.school.level;
-							
-							this.districtDefault=[];
-							this.districtDefault.push( this.dataForm.province);//区域选择省
-							this.districtDefault.push( this.dataForm.city);//区域选择市区 
+
+							this.districtDefault = [];
+							this.districtDefault.push(this.dataForm.province); //区域选择省
+							this.districtDefault.push(this.dataForm.city); //区域选择市区
 						}
 					});
 				}
 				// this.initSchoolType();
-				// this.initSchoolLevel(); 
+				// this.initSchoolLevel();
 			});
 		},
 		//区域选择事件
-		districtChange(e) {  
+		districtChange(e) {
 			this.dataForm.province = e[0]; //区域选择省
-			if(e.length > 1){
-				this.dataForm.city = e[1];//区域选择市区
-			} 
-		}, 
+			if (e.length > 1) {
+				this.dataForm.city = e[1]; //区域选择市区
+			}
+		},
 		// //初始化学校类型
 		// initSchoolType() {
 		// 	var that = this;
