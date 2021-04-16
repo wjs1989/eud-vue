@@ -122,8 +122,9 @@
 							// 参数一是: 数组元素
 							// 参数二是: 数组元素的索引
 							// 参数三是：当前的数组
-							this.defaultExpandedKeys.push(elment.id)
-							console.log(elment)
+							
+							//设置默认展开
+							this.defaultExpandedKeys.push(elment.id) 
 						}) 
 					}
 				})

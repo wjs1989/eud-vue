@@ -1,8 +1,11 @@
 <template>
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
+      <el-form-item label="字典名称">
+        <el-select v-model="dataForm.pid" placeholder="请选择">
+        	<el-option v-for="item in names" :key="item.value" :label="item.label" :value="item.value">
+        	</el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -91,8 +94,10 @@
     data () {
       return {
         dataForm: {
-          key: ''
+          pid: ''
         },
+		//字典名称
+		names:[],
         dataList: [],
         pageIndex: 1,
         pageSize: 10,
@@ -107,7 +112,8 @@
 	  Update
     },
     activated () {
-      this.getDataList()
+      this.getDataList();
+	  this.initTree();
     },
     methods: {
       // 获取数据列表
@@ -119,7 +125,7 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'key': this.dataForm.key			
+            'pid': this.dataForm.pid			
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -190,7 +196,29 @@
             }
           })
         })
-      }
+      },
+	  //初始化查询条件
+	  initTree() {
+		var that = this;
+		this.$http({
+			url: this.$http.adornUrl(`/dictionary/tree/0`),
+			method: 'get',
+			params: this.$http.adornParams()
+		}).then(({
+			data
+		}) => {
+			if (data && data.code === 0) { 
+				that.names=[]   
+				data.tree.children.forEach((elment, index, array) => {
+					that.names.push({
+						value: elment.id,
+						label: elment.label
+					});
+				});
+				
+			}
+		})
+	  }
     }
   }
 </script>

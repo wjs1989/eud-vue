@@ -292,5 +292,5 @@ export default {
 		  })
 		}
 	}
-};
+}
 </script>
