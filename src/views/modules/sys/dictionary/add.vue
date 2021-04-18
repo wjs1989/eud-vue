@@ -28,6 +28,9 @@
 					<el-form-item label="状态" prop="status">
 						<el-radio v-model="dataForm.status" label="1">启用</el-radio>
 						<el-radio v-model="dataForm.status" label="0">禁用</el-radio>
+					</el-form-item> 
+					<el-form-item label="排序" prop="serialNum">
+						<el-input v-model="dataForm.serialNum" placeholder="排序" type="number"></el-input>
 					</el-form-item>
 				</el-form>
 			</el-main>
@@ -67,7 +70,8 @@
 					name: '',
 					value: '',
 					describe: '',
-					status: '1'
+					status: '1',
+					serialNum: 0
 				},
 				dataRule: {
 					pid: [{
@@ -144,7 +148,8 @@
 								'name': this.dataForm.name,
 								'value': this.dataForm.value,
 								'describe': this.dataForm.describe,
-								'status': this.dataForm.status
+								'status': this.dataForm.status, 
+								'serialNum': this.dataForm.serialNum
 							})
 						}).then(({
 							data

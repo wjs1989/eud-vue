@@ -89,24 +89,15 @@
 			</el-tab-pane>
 			<el-tab-pane label="志愿偏好信息"> 
 				<el-form-item label="学校层次">
-					<el-radio-group v-model="form.schoolLevel">
-						<el-radio label="985">985</el-radio>
-						<el-radio label="211">211</el-radio>
-						<el-radio label="0">不限</el-radio>
+					<el-radio-group v-model="form.schoolLevel"> 
+						<el-radio v-for="item in schoolTypes"  :label="item.value">{{item.label}}</el-radio> 
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="名次上下调整">
 					<el-radio-group v-model="form.rankingAdjustment">
 						<el-row :gutter="10">
 							<el-col>
-								<el-radio label="500">500</el-radio>
-								<el-radio label="1000">1000</el-radio>
-								<el-radio label="2000">2000</el-radio>
-								<el-radio label="3000">3000</el-radio>
-								<el-radio label="5000">5000</el-radio>
-								<el-radio label="10000">10000</el-radio>
-								<el-radio label="20000">20000</el-radio>
-								<el-radio label="-1">不限</el-radio>
+								<el-radio v-for="item in rankingAdjustments"  :label="item.value">{{item.label}}</el-radio> 
 							</el-col>
 						</el-row>
 					</el-radio-group>
@@ -189,6 +180,9 @@
 					parent2: '',//家长2
 					teleNo2: '',//联系方式2
 					remark:'', //备注
+					yuwen:'', //语文分数
+					shuxue:'', //数学分数
+					yingyu:'', //英语分数
 					
 					optionalSubjects1: '', //自选科目1
 					subjectsVaule1: '',//自选科目分数1
@@ -197,7 +191,7 @@
 					optionalSubjects3: '',//自选科目3
 					subjectsVaule1: '',//自选科目分数3  
 					schoolLevel:'0',//学校级别 0是不限
-					rankingAdjustment:'-1',//排名调整 -1是不限
+					rankingAdjustment:-1,//排名调整 -1是不限
 					districtProvince:"", //区域选择省
 					districtCity:"",//区域选择市区
 					schoolType:"1",//学校类型 1本科 2专科
@@ -244,7 +238,21 @@
 				}],
 				cascaderDefault: ['js', 'nc'],
 				//提交按钮是否禁用
-				isDisabled : false
+				isDisabled : false,
+				//学校级别
+				schoolTypes:[{label:211,value:211}],
+				
+				//名次上下调整
+				rankingAdjustments:[
+					{label:500,value:500},
+					{label:1000,value:1000},
+					{label:2000,value:2000},
+					{label:3000,value:3000},
+					{label:5000,value:5000},
+					{label:10000,value:10000},
+					{label:20000,value:20000},
+					{label:'不限',value:-1}
+				]
 			}
 		}, 
 		activated () {
@@ -252,6 +260,8 @@
 		  this.initOptionalSubjects();
 		  //初始化区域信息
 		  this.initCascaderOptions();
+		  //初始化学校等级
+		  this.initSchoolTypes();
 		},
 		methods: {
 			onSubmit() {
@@ -292,30 +302,16 @@
 			//初始化自选科目
 			initOptionalSubjects(){
 				var that = this;
-				this.queryDictionaryByPCode("OPTIONAL_SUBJECTS",function(data){
+				this.$generalApi.queryDictionaryByPCode("OPTIONAL_SUBJECTS",function(data){
 					that.optionalSubjects=[];
 					data.forEach((elment, index, array) => {
 						that.optionalSubjects.push({
 							value:elment.code,
-							label: elment.describe
+							label: elment.name
 						})
 					}); 
 				});  
-			},
-			//通过父节点编号查询字典信息
-			queryDictionaryByPCode(pcode,_callBack){
-				this.$http({
-				  url: this.$http.adornUrl(`/dictionary/pcode/${pcode}`),
-				  method: 'get', 
-				}).then(({data}) => {
-				  if (data && data.code === 0) { 
-					  //字典信息
-				      typeof _callBack== "function" && _callBack(data.dictionary)
-				  } else {
-					this.$message.error(data.msg)
-				  } 
-				});
-			} ,
+			}, 
 			//初始化区域信息
 			initCascaderOptions(){ 
 				var that = this;
@@ -331,6 +327,19 @@
 					this.$message.error(data.msg)
 				  } 
 				});
+			},
+			//初始化学校等级
+			initSchoolTypes(){ 
+				var that = this;
+				this.$generalApi.queryDictionaryByPCode("SCHOOL_TYPE",function(data){
+					that.schoolTypes=[];
+					data.forEach((elment, index, array) => {
+						that.schoolTypes.push({
+							value:elment.value,
+							label: elment.name
+						})
+					}); 
+				}); 
 			}
 			
 		}
